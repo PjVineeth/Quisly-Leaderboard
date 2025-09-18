@@ -26,10 +26,8 @@ interface LeaderboardTableProps {
 export function LeaderboardTable({ data }: LeaderboardTableProps) {
   return (
     <div className="space-y-4" role="table" aria-label="Leaderboard rankings">
-      {/* Single scroll container for whole table */}
       <div className="overflow-x-auto rounded-xl border border-[var(--q3-stroke-normal)] bg-card">
         <div className="min-w-[880px]">
-          {/* Header (visible on all sizes for alignment) */}
           <div
             className="grid grid-cols-8 gap-4 px-5 py-4 text-xs font-medium text-muted-foreground border-b border-[var(--q3-stroke-normal)] sticky top-0 z-10 bg-[var(--q3-surface-dim)]/60 backdrop-blur supports-[backdrop-filter]:bg-[var(--q3-surface-dim)]/50 rounded-t-xl"
             role="rowgroup"
@@ -43,7 +41,6 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
             <div className="text-center">Accuracy</div>
           </div>
 
-          {/* Rows (same 8-col grid for all sizes) */}
           <div className="divide-y divide-[var(--q3-stroke-normal)]" role="rowgroup">
             {data.map((entry) => (
               <div
@@ -57,10 +54,10 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
                 role="row"
               >
                 <div className="grid grid-cols-8 gap-4 w-full items-center">
-                  {/* Rank */}
+                 
                   <div className="flex items-center"><RankBadge rank={entry.rank} /></div>
 
-                  {/* Student */}
+                 
                   <div className="col-span-2 flex items-center gap-3">
                     <Avatar className="w-8 h-8">
                       <AvatarImage src={entry.avatar || "/placeholder.svg"} alt={entry.name} />
@@ -74,7 +71,7 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
                     </div>
                   </div>
 
-                  {/* Overall pill */}
+                 
                   <div className="text-center">
                     <span className="inline-flex items-center gap-1 rounded-full bg-[var(--q3-surface-dim)] border border-[var(--q3-stroke-normal)] px-3 py-1.5 text-[13px] font-semibold text-foreground shadow-sm">
                       {entry.overallScore}

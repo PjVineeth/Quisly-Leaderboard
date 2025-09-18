@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button"
 
 interface LeaderboardHeaderProps {
   onBack?: () => void
-  // Controls for table filtering/sorting/search
   query?: string
   onQueryChange?: (value: string) => void
   subject?: string
@@ -97,12 +96,11 @@ export function LeaderboardHeader({ onBack, query, onQueryChange, subject, onSub
                 onValueChange={(v) => {
                   if (v === 'phy' || v === 'chem' || v === 'maths') {
                     onSubjectChange?.(v)
-                    onSortByChange?.('rank') // Reset sort when selecting subject
-                    onSortDirChange?.('desc') // Default to desc for subjects
+                    onSortByChange?.('rank')
+                    onSortDirChange?.('desc') 
                   } else {
-                    onSubjectChange?.('all') // Clear subject when selecting sort metric
+                    onSubjectChange?.('all') 
                     onSortByChange?.(v)
-                    // Default to desc for overall/accuracy, asc for rank
                     if (v === 'rank') {
                       onSortDirChange?.('asc')
                     } else {
@@ -122,7 +120,6 @@ export function LeaderboardHeader({ onBack, query, onQueryChange, subject, onSub
                 </SelectContent>
               </Select>
 
-              {/* Sort direction */}
               <Select value={sortDir ?? 'asc'} onValueChange={(v) => onSortDirChange?.(v as 'asc' | 'desc')}>
                 <SelectTrigger className="flex-1 md:w-[120px]"><SelectValue placeholder="Direction" /></SelectTrigger>
                 <SelectContent>

@@ -88,7 +88,6 @@ export function TopPerformerCard({
     <div className={cn("rounded-lg p-6 relative", cardClass)}>
       <div className="flex flex-col items-center gap-4">
         <div className="relative flex items-center justify-center">
-          {/* Badge behind avatar, centered under the circle */}
           {isTopThree ? (
             <img
               src={`/${rank}.svg`}

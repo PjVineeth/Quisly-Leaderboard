@@ -1,5 +1,3 @@
-// Converted for Vite React root usage
-
 import { useState, useEffect, useMemo, useCallback } from "react"
 import { LeaderboardHeader } from "@/components/leaderboard-header"
 import { TopPerformerCard } from "@/components/top-performer-card"
@@ -91,68 +89,6 @@ export default function LeaderboardPage() {
         setLeaderboardData(mapped)
       } catch (err: any) {
         console.error("Fetch error:", err)
-        
-        // Fallback to mock data for development
-        console.log("Using fallback mock data...")
-        const mockData: LeaderboardData[] = [
-          {
-            rank: 1,
-            name: "Alice Johnson",
-            overallScore: 285,
-            maxScore: 300,
-            phyScore: 95,
-            chemScore: 95,
-            mathsScore: 95,
-            accuracy: 95.0,
-            isCurrentUser: false,
-          },
-          {
-            rank: 2,
-            name: "Bob Smith",
-            overallScore: 270,
-            maxScore: 300,
-            phyScore: 90,
-            chemScore: 90,
-            mathsScore: 90,
-            accuracy: 90.0,
-            isCurrentUser: false,
-          },
-          {
-            rank: 3,
-            name: "Carol Davis",
-            overallScore: 255,
-            maxScore: 300,
-            phyScore: 85,
-            chemScore: 85,
-            mathsScore: 85,
-            accuracy: 85.0,
-            isCurrentUser: false,
-          },
-          {
-            rank: 4,
-            name: "David Wilson",
-            overallScore: 240,
-            maxScore: 300,
-            phyScore: 80,
-            chemScore: 80,
-            mathsScore: 80,
-            accuracy: 80.0,
-            isCurrentUser: false,
-          },
-          {
-            rank: 5,
-            name: "Eva Brown",
-            overallScore: 225,
-            maxScore: 300,
-            phyScore: 75,
-            chemScore: 75,
-            mathsScore: 75,
-            accuracy: 75.0,
-            isCurrentUser: false,
-          },
-        ]
-        
-        setLeaderboardData(mockData)
         setError(`API Error: ${err?.message ?? "Failed to load data"}. Using mock data for demonstration.`)
       } finally {
         setLoading(false)
@@ -208,10 +144,10 @@ export default function LeaderboardPage() {
     return arr
   }, [filteredData, getSortValue, sortDir])
 
-  // Top performers (first 3)
+  
   const topPerformers = useMemo(() => sortedData.slice(0, 3), [sortedData])
   
-  // Table data (skip top 3 on desktop to avoid repetition)
+
   const tableData = useMemo(() => 
     isDesktop ? sortedData.slice(3) : sortedData, 
     [sortedData, isDesktop]
@@ -224,7 +160,6 @@ export default function LeaderboardPage() {
     return tableData.slice(start, end)
   }, [tableData, currentPage])
 
-  // Synthetic current user card and strip data
   const currentUser = {
     rank: 73,
     name: "Prem Raj Kumar (You)",
@@ -376,12 +311,10 @@ export default function LeaderboardPage() {
         </div>
       </div>
 
-      {/* Pagination between table and current-user strip */}
       <div className="px-4 md:px-6 mb-0 text-center">
         <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
       </div>
 
-      {/* Sticky current user strip (glassy) */}
       <div className="sticky bottom-0 z-20">
         <div
           className="mx-4 md:mx-16 mb-0 rounded-t-2xl shadow-sm"
@@ -415,7 +348,6 @@ export default function LeaderboardPage() {
             <div className="text-center font-medium">{currentUser.accuracy.toFixed(2)}%</div>
           </div>
 
-          {/* Mobile: horizontally scrollable grid matching the table */}
           <div className="md:hidden overflow-x-auto">
             <div className="min-w-[880px] grid grid-cols-8 gap-4 items-center px-4 py-4">
               <div className="flex items-center"><RankBadge rank={currentUser.rank} /></div>

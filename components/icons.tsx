@@ -48,7 +48,6 @@ export const Icons = {
   Download,
 }
 
-// Dynamic icon resolver for backend-provided identifiers
 export type IconName = keyof typeof dynamicIconMap
 
 const dynamicIconMap = {
