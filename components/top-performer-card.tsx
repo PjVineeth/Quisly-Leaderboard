@@ -86,7 +86,7 @@ export function TopPerformerCard({
 
   return (
     <div className={cn("rounded-lg p-6 relative", cardClass)}>
-      <div className="flex flex-col items-center gap-4">
+      <div className="flex flex-col items-center gap-8">
         <div className="relative flex items-center justify-center">
           {isTopThree ? (
             <img
@@ -131,7 +131,7 @@ export function TopPerformerCard({
           </div>
         </div>
 
-        <div className="w-full space-y-3">
+        <div className="w-full space-y-3 mb-8">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Icons.Checks size={16} className="text-muted-foreground" />

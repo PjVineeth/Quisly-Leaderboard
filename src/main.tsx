@@ -7,7 +7,7 @@ import { Toaster } from '@/components/ui/toaster'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem storageKey="quilsy-theme">
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem storageKey="quisly-theme">
       <LeaderboardPage />
       <Toaster />
     </ThemeProvider>

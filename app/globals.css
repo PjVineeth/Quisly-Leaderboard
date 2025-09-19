@@ -9,6 +9,8 @@
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
   --primary: oklch(0.205 0 0);
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
@@ -21,11 +23,31 @@
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
-
-  /* Added quilsy design system variables */
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+  --q3-base-red: #e02a5e;
   --q3-base-orange: #ff7000;
+  --q3-base-green: #00893c;
+  --q3-base-yellow: #fdb900;
+  --q3-base-lime: #ccdf17;
+  --q3-base-embered: #00c1a1;
+  --q3-base-cyan: #00d2e3;
   --q3-base-sky: #00adff;
   --q3-base-blue: #3080ff;
+  --q3-base-indigo: #8a46fd;
+  --q3-base-purple: #dc1aff;
+  --q3-base-pink: #ff4896;
   --q3-neutral-default: #1d2933;
   --q3-neutral-light-v3: #c8cbd5;
   --q3-neutral-light: #60748f;
@@ -33,6 +55,7 @@
   --q3-surface-default: #ffffff;
   --q3-surface-glass: #ffffff5a;
   --q3-surface-dim: #f5f9fe;
+  --q3-accent-normal: var(--indigo-700);
   --q3-stroke-normal: #d9e6f2;
   --q3-stroke-normal-v2: #d2dfeb;
   --q3-stroke-glass: #ffffff32;
@@ -42,17 +65,81 @@
   --q3-surface-default_0: #ffffff00;
   --q3-surface-dim_0: #f5f9fe00;
   --q3-neutral-default_inverted: #ffffff;
+  --q3-accent-light: var(--indigo-100);
+  --q3-accent-dark: var(--indigo-900);
+  --q3-danger-light: var(--red-100);
+  --q3-danger-normal: var(--red-600);
+  --q3-danger-dark: var(--red-900);
+  --q3-success-light: var(--emerald-100);
+  --q3-success-normal: var(--emerald-600);
+  --q3-success-dark: var(--emerald-900);
+  --q3-surface-dimmer: #0058c60f;
+  --q3-stroke-light: #ddebf7;
+  --q3-neutral-light_inverted: #ffffffb3;
+  --q3-warning-light: var(--yellow-100);
+  --q3-warning-normal: var(--yellow-400);
+  --q3-warning-dark: var(--yellow-800);
+  --q3-cyan-light: var(--cyan-100);
+  --q3-cyan-normal: var(--cyan-600);
+  --q3-cyan-dark: var(--cyan-900);
   --q3-orange-light: var(--orange-100);
   --q3-orange-normal: var(--orange-600);
   --q3-orange-dark: var(--orange-900);
+  --q3-amber-light: var(--amber-100);
+  --q3-amber-normal: var(--amber-600);
+  --q3-amber-dark: var(--amber-900);
   --q3-yellow-light: var(--yellow-100);
   --q3-yellow-normal: var(--yellow-600);
   --q3-yellow-dark: var(--yellow-900);
+  --q3-lime-light: var(--lime-100);
+  --q3-lime-normal: var(--lime-600);
+  --q3-lime-dark: var(--lime-900);
+  --q3-green-light: var(--green-100);
+  --q3-green-normal: var(--green-600);
+  --q3-green-dark: var(--green-900);
+  --q3-emerald-light: var(--emerald-100);
+  --q3-emerald-normal: var(--emerald-600);
+  --q3-emerald-dark: var(--emerald-900);
+  --q3-teal-light: var(--teal-100);
+  --q3-teal-normal: var(--teal-600);
+  --q3-teal-dark: var(--teal-900);
+  --q3-sky-light: var(--sky-100);
+  --q3-sky-normal: var(--sky-600);
+  --q3-sky-dark: var(--sky-900);
+  --q3-blue-light: var(--blue-100);
   --q3-blue-normal: var(--blue-600);
-  --q3-surface-dimmer: #0058c60f;
-  --q3-stroke-light: #ddebf7;
+  --q3-blue-dark: var(--blue-900);
+  --q3-indigo-light: var(--indigo-100);
+  --q3-indigo-normal: var(--indigo-600);
+  --q3-indigo-dark: var(--indigo-900);
+  --q3-violet-light: var(--violet-100);
+  --q3-violet-normal: var(--violet-600);
+  --q3-violet-dark: var(--violet-900);
+  --q3-purple-light: var(--purple-100);
+  --q3-purple-normal: var(--purple-600);
+  --q3-purple-dark: var(--purple-900);
+  --q3-fuchsia-light: var(--fuchsia-100);
+  --q3-fuchsia-normal: var(--fuchsia-600);
+  --q3-fuchsia-dark: var(--fuchsia-900);
+  --q3-pink-light: var(--pink-100);
+  --q3-pink-normal: var(--pink-600);
+  --q3-pink-dark: var(--pink-900);
+  --q3-rose-light: var(--rose-100);
+  --q3-rose-normal: var(--rose-600);
+  --q3-rose-dark: var(--rose-900);
   --q3-surface-dimmest: #0058c61a;
-
+  --q3-gradient-border-right: linear-gradient(
+    to right,
+    var(--q3-stroke-light),
+    var(--q3-stroke-light),
+    var(--q3-blue-normal)
+  );
+  --q3-gradient-border-bottom: linear-gradient(
+    to bottom,
+    var(--q3-stroke-light),
+    var(--q3-stroke-light),
+    var(--q3-blue-normal)
+  );
   /* Light mode rank colors  */
   --rank1-bg: linear-gradient(180deg, #fff7de 0%, #ffffff 100%);
   --rank1-border: linear-gradient(180deg, #ffc721 0%, #ffffff 100%);
@@ -68,11 +155,6 @@
   --rank3-border: linear-gradient(180deg, #f54a00 0%, #ffffff 100%);
   --rank3-rank-bg: var(--q3-orange-light, #ffedd4);
   --rank3-rank-color: var(--q3-orange-normal, #f54a00);
-
-  --rank4-bg: linear-gradient(180deg, #ffffff 0%, #ffffff 100%);
-  --rank4-border: linear-gradient(180deg, #e5e7eb 0%, #ffffff 100%);
-  --rank4-rank-bg: var(--q3-gray-light, #f9fafb);
-  --rank4-rank-color: var(--q3-gray-normal, #6b7280);
 }
 
 .dark {
@@ -91,7 +173,6 @@
   --accent: oklch(0.371 0 0);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.205 0 0);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
@@ -108,16 +189,25 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.439 0 0);
-
+  --q3-base-red: #ff6654;
   --q3-base-orange: #ff7000;
+  --q3-base-green: #36bb43;
+  --q3-base-yellow: #ffbd38;
+  --q3-base-lime: #ccdf17;
+  --q3-base-embered: #00c1a1;
+  --q3-base-cyan: #00d2e3;
   --q3-base-sky: #00adff;
   --q3-base-blue: #3080ff;
+  --q3-base-indigo: #9d63ff;
+  --q3-base-purple: #dc1aff;
+  --q3-base-pink: #ff4896;
   --q3-neutral-default: #ffffff;
   --q3-neutral-light: #bcc6d3;
   --q3-neutral-light-v3: #c8cbd5;
   --q3-surface-default: #1b2126;
   --q3-surface-glass: #1b21265a;
   --q3-surface-dim: #202a32;
+  --q3-accent-normal: var(--indigo-300);
   --q3-stroke-normal: #303d47;
   --q3-stroke-glass: #1b212632;
   --q3-surface-glass-light: #1b212614;
@@ -127,15 +217,74 @@
   --q3-surface-default_0: #1b212600;
   --q3-surface-dim_0: #0f151a00;
   --q3-neutral-default_inverted: #1d2933;
+  --q3-accent-light: var(--indigo-900);
+  --q3-accent-dark: var(--indigo-100);
+  --q3-danger-light: var(--rose-900);
+  --q3-danger-normal: var(--rose-300);
+  --q3-danger-dark: var(--rose-100);
+  --q3-success-light: var(--emerald-900);
+  --q3-success-normal: var(--emerald-300);
+  --q3-success-dark: var(--emerald-100);
+  --q3-surface-dimmer: #27333d;
+  --q3-neutral-light_inverted: #12263fb3;
+  --q3-warning-light: var(--yellow-100);
+  --q3-warning-normal: var(--yellow-500);
+  --q3-warning-dark: var(--yellow-900);
+  --q3-cyan-light: var(--cyan-900);
+  --q3-cyan-normal: var(--cyan-400);
+  --q3-cyan-dark: var(--cyan-100);
   --q3-orange-light: var(--orange-900);
   --q3-orange-normal: var(--orange-300);
   --q3-orange-dark: var(--orange-100);
+  --q3-amber-light: var(--amber-900);
+  --q3-amber-normal: var(--amber-300);
+  --q3-amber-dark: var(--amber-100);
   --q3-yellow-light: var(--yellow-900);
   --q3-yellow-normal: var(--yellow-300);
   --q3-yellow-dark: var(--yellow-100);
+  --q3-lime-light: var(--lime-900);
+  --q3-lime-normal: var(--lime-300);
+  --q3-lime-dark: var(--lime-100);
+  --q3-green-light: var(--green-900);
+  --q3-green-normal: var(--green-300);
+  --q3-green-dark: var(--green-100);
+  --q3-emerald-light: var(--emerald-900);
+  --q3-emerald-normal: var(--emerald-300);
+  --q3-emerald-dark: var(--emerald-100);
+  --q3-teal-light: var(--teal-900);
+  --q3-teal-normal: var(--teal-300);
+  --q3-teal-dark: var(--teal-100);
+  --q3-sky-light: var(--sky-900);
+  --q3-sky-normal: var(--sky-300);
+  --q3-sky-dark: var(--sky-100);
+  --q3-blue-light: var(--blue-900);
   --q3-blue-normal: var(--blue-300);
-  --q3-surface-dimmer: #27333d;
+  --q3-blue-dark: var(--blue-100);
+  --q3-indigo-light: var(--indigo-900);
+  --q3-indigo-normal: var(--indigo-300);
+  --q3-indigo-dark: var(--indigo-100);
+  --q3-violet-light: var(--violet-900);
+  --q3-violet-normal: var(--violet-300);
+  --q3-violet-dark: var(--violet-100);
+  --q3-purple-light: var(--purple-900);
+  --q3-purple-normal: var(--purple-300);
+  --q3-purple-dark: var(--purple-100);
+  --q3-fuchsia-light: var(--fuchsia-900);
+  --q3-fuchsia-normal: var(--fuchsia-300);
+  --q3-fuchsia-dark: var(--fuchsia-100);
+  --q3-pink-light: var(--pink-900);
+  --q3-pink-normal: var(--pink-300);
+  --q3-pink-dark: var(--pink-100);
+  --q3-rose-light: var(--rose-900);
+  --q3-rose-normal: var(--rose-300);
+  --q3-rose-dark: var(--rose-100);
   --q3-surface-dimmest: #3b4751;
+  --q3-gradient-border: linear-gradient(
+    to right,
+    var(--q3-stroke-light),
+    var(--q3-stroke-light),
+    var(--q3-blue-normal)
+  );
 
   /* Dark mode rank colors */
   --rank1-bg: linear-gradient(180deg, #332600 0%, #1b2126 100%);
@@ -204,6 +353,17 @@
   position: relative;
 }
 
+.rank-card-1::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 20%;
+  background: linear-gradient(to bottom, transparent, var(--background));
+  pointer-events: none;
+}
+
 .rank-card-1::before {
   content: "";
   position: absolute;
@@ -221,6 +381,17 @@
   border: 1px solid transparent;
   background-clip: padding-box;
   position: relative;
+}
+
+.rank-card-2::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 20%;
+  background: linear-gradient(to bottom, transparent, var(--background));
+  pointer-events: none;
 }
 
 .rank-card-2::before {
@@ -242,6 +413,17 @@
   position: relative;
 }
 
+.rank-card-3::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 20%;
+  background: linear-gradient(to bottom, transparent, var(--background));
+  pointer-events: none;
+}
+
 .rank-card-3::before {
   content: "";
   position: absolute;
@@ -260,6 +442,17 @@
   border: 1px solid transparent;
   background-clip: padding-box;
   position: relative;
+}
+
+.rank-card-4::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 20%;
+  background: linear-gradient(to bottom, transparent, var(--background));
+  pointer-events: none;
 }
 
 .rank-card-4::before {

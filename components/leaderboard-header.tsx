@@ -76,9 +76,9 @@ export function LeaderboardHeader({ onBack, query, onQueryChange, subject, onSub
               <ol className="flex items-center gap-1 flex-wrap">
                 <li>JEE Main Test series</li>
                 <li className="text-muted-foreground/50">/</li>
-                <li>quilsy Part Test</li>
+                <li>quisly Part Test</li>
                 <li className="text-muted-foreground/50">/</li>
-                <li>quilsy Part Test (QPT) - 1 (Old)</li>
+                <li>quisly Part Test (QPT) - 1 (Old)</li>
                 <li className="text-muted-foreground/50">/</li>
                 <li>Analysis</li>
                 <li className="text-muted-foreground/50">/</li>
@@ -87,10 +87,8 @@ export function LeaderboardHeader({ onBack, query, onQueryChange, subject, onSub
             </nav>
           )}
 
-          {/* Toolbar: single control + direction, right search */}
           <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
             <div className="flex items-center gap-2 w-full md:w-auto">
-              {/* Single control: sort or subject filter */}
               <Select
                 value={(subject && subject !== 'all') ? subject : (sortBy ?? 'rank')}
                 onValueChange={(v) => {

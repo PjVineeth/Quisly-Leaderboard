@@ -33,7 +33,7 @@ A modern, responsive leaderboard application built with React, TypeScript, and V
 
 ### Project Architecture
 ```
-Quilsy-leaderboard/
+quisly-leaderboard/
 ├── app/                          # Next.js app directory (converted to Vite)
 │   ├── globals.css              # Global styles and design system
 │   └── page.tsx                 # Main leaderboard page component
@@ -146,7 +146,7 @@ The application uses a comprehensive design system with CSS custom properties:
 ```bash
 # Clone the repository
 git clone <repository-url>
-cd Quilsy-leaderboard
+cd quisly-leaderboard
 
 # Install dependencies
 pnpm install

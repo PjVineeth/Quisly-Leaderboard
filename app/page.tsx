@@ -26,6 +26,7 @@ interface LeaderboardData {
 export default function LeaderboardPage() {
   const [currentPage, setCurrentPage] = useState(1)
   const [leaderboardData, setLeaderboardData] = useState<LeaderboardData[]>([])
+  const [allData, setAllData] = useState<LeaderboardData[]>([]) // Store all data for search
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isDesktop, setIsDesktop] = useState(false)
@@ -33,8 +34,57 @@ export default function LeaderboardPage() {
   const [subject, setSubject] = useState<'phy' | 'chem' | 'maths' | 'all'>("all")
   const [sortBy, setSortBy] = useState<'rank' | 'overall' | 'accuracy'>("rank")
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>("asc")
+  const [totalPages, setTotalPages] = useState(10)
+  const [isSearchMode, setIsSearchMode] = useState(false)
 
-  const itemsPerPage = 10
+  // Function to fetch all data for search
+  const fetchAllData = async () => {
+    try {
+      const allResults: LeaderboardData[] = []
+      
+      // Fetch all pages (assuming 10 pages for now)
+      for (let page = 1; page <= 10; page++) {
+        const res = await fetch(`https://api.quizrr.in/api/hiring/leaderboard?page=${page}&limit=100`, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+          cache: "no-store",
+        })
+        
+        if (res.ok) {
+          const json = await res.json()
+          const list: any[] = (json?.data?.results ?? []) as any[]
+          
+          const mapped: LeaderboardData[] = list.map((item: any, idx: number) => {
+            const subjects: any[] = Array.isArray(item.subjects) ? item.subjects : []
+            const getScore = (label: string) => {
+              const entry = subjects.find((s) =>
+                String(s?.subjectId?.title ?? '').toLowerCase().includes(label),
+              )
+              return Number(entry?.totalMarkScored ?? 0)
+            }
+            return {
+              rank: Number(item.rank ?? idx + 1),
+              name: String(item?.userId?.name ?? "Unknown"),
+              overallScore: Number(item.totalMarkScored ?? 0),
+              maxScore: 300,
+              phyScore: getScore("phys"),
+              chemScore: getScore("chem"),
+              mathsScore: getScore("math"),
+              accuracy: Number(item.accuracy ?? 0),
+              avatar: item?.userId?.profilePicture ?? undefined,
+              isCurrentUser: false,
+            }
+          })
+          
+          allResults.push(...mapped)
+        }
+      }
+      
+      setAllData(allResults)
+    } catch (err) {
+      console.error("Error fetching all data:", err)
+    }
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -42,26 +92,21 @@ export default function LeaderboardPage() {
         setLoading(true)
         setError(null)
         
-        console.log("Fetching leaderboard data from API...")
-        const res = await fetch("https://api.quizrr.in/api/hiring/leaderboard?page=1&limit=100", {
+        const res = await fetch(`https://api.quizrr.in/api/hiring/leaderboard?page=${currentPage}&limit=100`, {
           method: "GET",
           headers: { "Content-Type": "application/json" },
           cache: "no-store",
         })
         
-        console.log("Response status:", res.status)
-        
         if (!res.ok) {
           const errorText = await res.text()
-          console.error("API Error Response:", errorText)
           throw new Error(`Request failed: ${res.status} - ${errorText}`)
         }
         
         const json = await res.json()
-        console.log("API Response received, processing data...")
-        
         const list: any[] = (json?.data?.results ?? []) as any[]
-        console.log("Leaderboard list length:", list.length)
+        
+        setTotalPages(10)
         
         const mapped: LeaderboardData[] = list.map((item: any, idx: number) => {
           const subjects: any[] = Array.isArray(item.subjects) ? item.subjects : []
@@ -85,10 +130,8 @@ export default function LeaderboardPage() {
           }
         })
         
-        console.log("Successfully loaded", mapped.length, "leaderboard entries")
         setLeaderboardData(mapped)
       } catch (err: any) {
-        console.error("Fetch error:", err)
         setError(`API Error: ${err?.message ?? "Failed to load data"}. Using mock data for demonstration.`)
       } finally {
         setLoading(false)
@@ -96,7 +139,7 @@ export default function LeaderboardPage() {
     }
 
     fetchData()
-  }, [])
+  }, [currentPage])
 
   // Track desktop breakpoint (lg: 1024px)
   useEffect(() => {
@@ -110,55 +153,74 @@ export default function LeaderboardPage() {
     return () => mql.removeEventListener("change", onChange as any)
   }, [])
 
-  // Consolidated sorting logic
-  const getSortValue = useCallback((x: LeaderboardData) => {
-    if (subject === 'phy') return x.phyScore
-    if (subject === 'chem') return x.chemScore
-    if (subject === 'maths') return x.mathsScore
-    if (sortBy === 'rank') return x.rank
-    if (sortBy === 'overall') return x.overallScore
-    if (sortBy === 'accuracy') return x.accuracy
-    return x.rank
-  }, [subject, sortBy])
 
-  // Search and filter data
+  // Search and filter logic
   const filteredData = useMemo(() => {
-    const q = query.trim().toLowerCase()
-    let filtered = leaderboardData
+    let data = isSearchMode ? allData : leaderboardData
     
-    if (q) {
-      filtered = filtered.filter((x) => x.name.toLowerCase().includes(q))
+    // Apply search filter
+    if (query.trim()) {
+      const searchTerm = query.trim().toLowerCase()
+      data = data.filter((item) => 
+        item.name.toLowerCase().includes(searchTerm)
+      )
     }
     
-    return filtered
-  }, [leaderboardData, query])
-
-  // Sort data
-  const sortedData = useMemo(() => {
-    const arr = [...filteredData]
-    arr.sort((a, b) => {
-      const va = getSortValue(a)
-      const vb = getSortValue(b)
-      return sortDir === 'asc' ? va - vb : vb - va
+    // Apply subject filter
+    if (subject !== 'all') {
+      data = data.filter((item) => {
+        if (subject === 'phy') return item.phyScore > 0
+        if (subject === 'chem') return item.chemScore > 0
+        if (subject === 'maths') return item.mathsScore > 0
+        return true
+      })
+    }
+    
+    // Apply sorting
+    data.sort((a, b) => {
+      let aValue, bValue
+      if (subject === 'phy') {
+        aValue = a.phyScore
+        bValue = b.phyScore
+      } else if (subject === 'chem') {
+        aValue = a.chemScore
+        bValue = b.chemScore
+      } else if (subject === 'maths') {
+        aValue = a.mathsScore
+        bValue = b.mathsScore
+      } else if (sortBy === 'rank') {
+        aValue = a.rank
+        bValue = b.rank
+      } else if (sortBy === 'overall') {
+        aValue = a.overallScore
+        bValue = b.overallScore
+      } else if (sortBy === 'accuracy') {
+        aValue = a.accuracy
+        bValue = b.accuracy
+      } else {
+        aValue = a.rank
+        bValue = b.rank
+      }
+      
+      return sortDir === 'asc' ? aValue - bValue : bValue - aValue
     })
-    return arr
-  }, [filteredData, getSortValue, sortDir])
+    
+    return data
+  }, [isSearchMode, query, allData, leaderboardData, subject, sortBy, sortDir])
 
+  const topPerformers = useMemo(() => {
+    return filteredData.slice(0, 3)
+  }, [filteredData])
   
-  const topPerformers = useMemo(() => sortedData.slice(0, 3), [sortedData])
-  
-
-  const tableData = useMemo(() => 
-    isDesktop ? sortedData.slice(3) : sortedData, 
-    [sortedData, isDesktop]
-  )
-
-  const totalPages = Math.max(1, Math.ceil((tableData.length || 0) / itemsPerPage))
   const pagedData = useMemo(() => {
-    const start = (currentPage - 1) * itemsPerPage
-    const end = start + itemsPerPage
-    return tableData.slice(start, end)
-  }, [tableData, currentPage])
+    if (isSearchMode) {
+      return filteredData
+    }
+    if (isDesktop && currentPage === 1) {
+      return filteredData.slice(3)
+    }
+    return filteredData
+  }, [isSearchMode, filteredData, isDesktop, currentPage])
 
   const currentUser = {
     rank: 73,
@@ -171,58 +233,157 @@ export default function LeaderboardPage() {
     accuracy: 80.3,
   }
 
-  const doExport = useCallback(() => {
-    const rows = [
-      [
-        "Rank",
-        "Name",
-        "Overall Score",
-        "Max Score",
-        "Physics",
-        "Chemistry",
-        "Maths",
-        "Accuracy (%)",
-      ],
-      ...sortedData.map((x) => [
-        x.rank,
-        x.name,
-        x.overallScore,
-        x.maxScore,
-        x.phyScore,
-        x.chemScore,
-        x.mathsScore,
-        x.accuracy.toFixed(2),
-      ]),
-    ]
-
-    const csv = rows
-      .map((r) => r.map((cell) => {
-        const v = String(cell ?? '')
-        if (v.includes(',') || v.includes('"') || v.includes('\n')) {
-          return '"' + v.replace(/"/g, '""') + '"'
+  const doExport = useCallback(async () => {
+    try {
+      // Always fetch all pages for export
+      const allResults: LeaderboardData[] = []
+      
+      for (let page = 1; page <= 10; page++) {
+        const res = await fetch(`https://api.quizrr.in/api/hiring/leaderboard?page=${page}&limit=100`, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+          cache: "no-store",
+        })
+        
+        if (res.ok) {
+          const json = await res.json()
+          const list: any[] = (json?.data?.results ?? []) as any[]
+          
+          const mapped: LeaderboardData[] = list.map((item: any, idx: number) => {
+            const subjects: any[] = Array.isArray(item.subjects) ? item.subjects : []
+            const getScore = (label: string) => {
+              const entry = subjects.find((s) =>
+                String(s?.subjectId?.title ?? '').toLowerCase().includes(label),
+              )
+              return Number(entry?.totalMarkScored ?? 0)
+            }
+            return {
+              rank: Number(item.rank ?? idx + 1),
+              name: String(item?.userId?.name ?? "Unknown"),
+              overallScore: Number(item.totalMarkScored ?? 0),
+              maxScore: 300,
+              phyScore: getScore("phys"),
+              chemScore: getScore("chem"),
+              mathsScore: getScore("math"),
+              accuracy: Number(item.accuracy ?? 0),
+              avatar: item?.userId?.profilePicture ?? undefined,
+              isCurrentUser: false,
+            }
+          })
+          
+          allResults.push(...mapped)
         }
-        return v
-      }).join(','))
-      .join('\n')
+      }
 
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    const ts = new Date().toISOString().replace(/[:.]/g, '-')
-    link.href = url
-    link.setAttribute('download', `leaderboard-export-${ts}.csv`)
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    URL.revokeObjectURL(url)
-  }, [sortedData])
+      // Apply current filters to all data using the same logic as filteredData
+      let exportData = allResults
+      
+      // Apply search filter
+      if (query.trim()) {
+        const searchTerm = query.trim().toLowerCase()
+        exportData = exportData.filter((item) => 
+          item.name.toLowerCase().includes(searchTerm)
+        )
+      }
+      
+      // Apply subject filter
+      if (subject !== 'all') {
+        exportData = exportData.filter((item) => {
+          if (subject === 'phy') return item.phyScore > 0
+          if (subject === 'chem') return item.chemScore > 0
+          if (subject === 'maths') return item.mathsScore > 0
+          return true
+        })
+      }
+      
+      // Apply sorting
+      exportData.sort((a, b) => {
+        let aValue, bValue
+        if (subject === 'phy') {
+          aValue = a.phyScore
+          bValue = b.phyScore
+        } else if (subject === 'chem') {
+          aValue = a.chemScore
+          bValue = b.chemScore
+        } else if (subject === 'maths') {
+          aValue = a.mathsScore
+          bValue = b.mathsScore
+        } else if (sortBy === 'rank') {
+          aValue = a.rank
+          bValue = b.rank
+        } else if (sortBy === 'overall') {
+          aValue = a.overallScore
+          bValue = b.overallScore
+        } else if (sortBy === 'accuracy') {
+          aValue = a.accuracy
+          bValue = b.accuracy
+        } else {
+          aValue = a.rank
+          bValue = b.rank
+        }
+        
+        return sortDir === 'asc' ? aValue - bValue : bValue - aValue
+      })
+
+      const rows = [
+        [
+          "Rank",
+          "Name",
+          "Overall Score",
+          "Max Score",
+          "Physics",
+          "Chemistry",
+          "Maths",
+          "Accuracy (%)",
+        ],
+        ...exportData.map((x: LeaderboardData) => [
+          x.rank,
+          x.name,
+          x.overallScore,
+          x.maxScore,
+          x.phyScore,
+          x.chemScore,
+          x.mathsScore,
+          x.accuracy.toFixed(2),
+        ]),
+      ]
+
+      const csv = rows
+        .map((r) => r.map((cell: any) => {
+          const v = String(cell ?? '')
+          if (v.includes(',') || v.includes('"') || v.includes('\n')) {
+            return '"' + v.replace(/"/g, '""') + '"'
+          }
+          return v
+        }).join(','))
+        .join('\n')
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      const ts = new Date().toISOString().replace(/[:.]/g, '-')
+      link.href = url
+      link.setAttribute('download', `leaderboard-export-${ts}.csv`)
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
+    } catch (err) {
+      console.error("Export error:", err)
+      toast({
+        title: "Export Failed",
+        description: "Failed to export data. Please try again.",
+        variant: "destructive",
+      })
+    }
+  }, [subject, query, sortBy, sortDir])
 
   const exportCsv = useCallback(() => {
     const t = toast({
-      title: "Export filtered results?",
-      description: "This will export a CSV of the current filter and sorting.",
+      title: "Export all filtered results?",
+      description: "This will export a CSV of all 10 pages with current filters and sorting applied.",
       action: (
-        <ToastAction altText="Export now" onClick={doExport}>
+        <ToastAction altText="Export now" onClick={() => doExport()}>
           Export
         </ToastAction>
       ),
@@ -240,7 +401,6 @@ export default function LeaderboardPage() {
               <div key={i} className="rounded-lg border p-4 animate-pulse bg-muted/30 h-40" />
             ))}
           </div>
-          {/* Loading skeleton rows without outer card/title */}
           <div className="space-y-2" role="status" aria-live="polite">
             {Array.from({ length: 8 }).map((_, i) => (
               <div key={i} className="h-12 rounded-md bg-muted/30 animate-pulse" />
@@ -269,7 +429,16 @@ export default function LeaderboardPage() {
     <div className="min-h-screen bg-background">
       <LeaderboardHeader
         query={query}
-        onQueryChange={(v) => { setCurrentPage(1); setQuery(v) }}
+        onQueryChange={(v) => { 
+          setCurrentPage(1); 
+          setQuery(v);
+          if (v.trim() !== '') {
+            setIsSearchMode(true);
+            fetchAllData();
+          } else {
+            setIsSearchMode(false);
+          }
+        }}
         subject={subject}
         onSubjectChange={(v) => { setCurrentPage(1); setSubject(v as any) }}
         sortBy={sortBy}
@@ -279,9 +448,8 @@ export default function LeaderboardPage() {
         onExport={exportCsv}
       />
 
-      <div className="px-4 md:px-16 pb-6">
-        {/* Users (top cards) - large screens only */}
-        <div className="mb-8 hidden lg:block">
+      <div className="pb-6">
+        <div className="mb-8 hidden lg:block px-4 md:px-16">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-6">
             {[...topPerformers, { ...currentUser, isCurrentUser: true }].map((performer) => (
               <TopPerformerCard
@@ -301,8 +469,7 @@ export default function LeaderboardPage() {
           </div>
         </div>
 
-        {/* Table */}
-        <div className="p-0">
+        <div className="w-full">
           {pagedData.length === 0 ? (
             <div className="py-12 text-center text-muted-foreground">No results to display.</div>
           ) : (
@@ -312,7 +479,18 @@ export default function LeaderboardPage() {
       </div>
 
       <div className="px-4 md:px-6 mb-0 text-center">
-        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+        {!isSearchMode && (
+          <Pagination 
+            currentPage={currentPage} 
+            totalPages={totalPages} 
+            onPageChange={(page) => setCurrentPage(page)} 
+          />
+        )}
+        {isSearchMode && (
+          <div className="py-4 text-sm text-muted-foreground">
+            Showing {filteredData.length} search results
+          </div>
+        )}
       </div>
 
       <div className="sticky bottom-0 z-20">
