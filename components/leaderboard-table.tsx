@@ -44,7 +44,7 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
 
             {/* Scrollable Table Body with Responsive Height */}
             <div 
-              className="divide-y divide-[var(--q3-stroke-normal)] max-h-[300px] sm:max-h-[400px] md:max-h-[500px] lg:max-h-[650px] overflow-y-auto"
+              className="divide-y divide-[var(--q3-stroke-normal)] max-h-[380px] sm:max-h-[450px] md:max-h-[550px] lg:max-h-[650px] overflow-y-auto"
               role="rowgroup"
             >
               {data.map((entry) => (
