@@ -27,12 +27,10 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
   return (
     <div className="w-full" role="table" aria-label="Leaderboard rankings">
       <div className="mx-4 md:mx-16 rounded-xl border-2 border-[var(--q3-stroke-normal)] bg-card overflow-hidden">
-        {/* Fixed width container with horizontal scroll */}
         <div className="w-full overflow-x-auto">
           <div className="min-w-[880px]">
-            {/* Sticky Header */}
             <div
-              className="grid grid-cols-8 gap-4 px-5 py-4 text-xs font-medium text-muted-foreground border-b-2 border-[var(--q3-stroke-normal)] sticky top-0 z-20 bg-[var(--q3-surface-dim)]/95 backdrop-blur supports-[backdrop-filter]:bg-[var(--q3-surface-dim)]/95"
+              className="grid grid-cols-8 gap-2 sm:gap-4 px-3 sm:px-5 py-3 sm:py-4 text-xs font-medium text-muted-foreground border-b-2 border-[var(--q3-stroke-normal)] sticky top-0 z-20 bg-[var(--q3-surface-dim)]/95 backdrop-blur supports-[backdrop-filter]:bg-[var(--q3-surface-dim)]/95"
               role="rowgroup"
             >
               <div className="text-left">Rank</div>
@@ -44,23 +42,23 @@ export function LeaderboardTable({ data }: LeaderboardTableProps) {
               <div className="text-center">Accuracy</div>
             </div>
 
-            {/* Scrollable Table Body with Fixed Height */}
+            {/* Scrollable Table Body with Responsive Height */}
             <div 
-              className="divide-y divide-[var(--q3-stroke-normal)] max-h-[650px] overflow-y-auto"
+              className="divide-y divide-[var(--q3-stroke-normal)] max-h-[300px] sm:max-h-[400px] md:max-h-[500px] lg:max-h-[650px] overflow-y-auto"
               role="rowgroup"
             >
               {data.map((entry) => (
                 <div
                   key={`${entry.rank}-${entry.name}`}
                   className={cn(
-                    "px-5 py-4 transition-colors hover:bg-muted/50",
+                    "px-3 sm:px-5 py-3 sm:py-4 transition-colors hover:bg-muted/50",
                     entry.isCurrentUser
                       ? "bg-blue-50 dark:bg-blue-950/20"
                       : "bg-transparent",
                   )}
                   role="row"
                 >
-                  <div className="grid grid-cols-8 gap-4 w-full items-center">
+                  <div className="grid grid-cols-8 gap-2 sm:gap-4 w-full items-center">
                    
                     <div className="flex items-center"><RankBadge rank={entry.rank} /></div>
 

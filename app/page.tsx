@@ -26,6 +26,7 @@ interface LeaderboardData {
 export default function LeaderboardPage() {
   const [currentPage, setCurrentPage] = useState(1)
   const [leaderboardData, setLeaderboardData] = useState<LeaderboardData[]>([])
+  const [firstPageData, setFirstPageData] = useState<LeaderboardData[]>([]) // Store first page data for top cards
   const [allData, setAllData] = useState<LeaderboardData[]>([]) // Store all data for search
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -131,6 +132,10 @@ export default function LeaderboardPage() {
         })
         
         setLeaderboardData(mapped)
+        
+        if (currentPage === 1) {
+          setFirstPageData(mapped)
+        }
       } catch (err: any) {
         setError(`API Error: ${err?.message ?? "Failed to load data"}. Using mock data for demonstration.`)
       } finally {
@@ -141,7 +146,6 @@ export default function LeaderboardPage() {
     fetchData()
   }, [currentPage])
 
-  // Track desktop breakpoint (lg: 1024px)
   useEffect(() => {
     const mql = window.matchMedia("(min-width: 1024px)")
     const onChange = (e: MediaQueryListEvent | MediaQueryList) => {
@@ -209,18 +213,22 @@ export default function LeaderboardPage() {
   }, [isSearchMode, query, allData, leaderboardData, subject, sortBy, sortDir])
 
   const topPerformers = useMemo(() => {
-    return filteredData.slice(0, 3)
-  }, [filteredData])
+    if (isSearchMode) {
+      return filteredData.slice(0, 3)
+    }
+    return firstPageData.slice(0, 3)
+  }, [isSearchMode, filteredData, firstPageData])
   
   const pagedData = useMemo(() => {
     if (isSearchMode) {
       return filteredData
     }
-    if (isDesktop && currentPage === 1) {
-      return filteredData.slice(3)
+
+    if (currentPage === 1 && isDesktop) {
+      return leaderboardData.slice(3)
     }
-    return filteredData
-  }, [isSearchMode, filteredData, isDesktop, currentPage])
+    return leaderboardData
+  }, [isSearchMode, filteredData, leaderboardData, currentPage, isDesktop])
 
   const currentUser = {
     rank: 73,
@@ -235,7 +243,6 @@ export default function LeaderboardPage() {
 
   const doExport = useCallback(async () => {
     try {
-      // Always fetch all pages for export
       const allResults: LeaderboardData[] = []
       
       for (let page = 1; page <= 10; page++) {
@@ -275,10 +282,8 @@ export default function LeaderboardPage() {
         }
       }
 
-      // Apply current filters to all data using the same logic as filteredData
       let exportData = allResults
       
-      // Apply search filter
       if (query.trim()) {
         const searchTerm = query.trim().toLowerCase()
         exportData = exportData.filter((item) => 
@@ -286,7 +291,6 @@ export default function LeaderboardPage() {
         )
       }
       
-      // Apply subject filter
       if (subject !== 'all') {
         exportData = exportData.filter((item) => {
           if (subject === 'phy') return item.phyScore > 0
@@ -296,7 +300,6 @@ export default function LeaderboardPage() {
         })
       }
       
-      // Apply sorting
       exportData.sort((a, b) => {
         let aValue, bValue
         if (subject === 'phy') {
